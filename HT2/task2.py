@@ -4,12 +4,9 @@ the colors from color_list_1 which are not present in color_list_2.'''
 
 sequences_1 = input("Please, type in colors seperated ONLY by a comma:")
 sequences_2 = input("Type in colors seperated ONLY by a comma, the next sequenc:")
-colorlist_1 = sequences_1.split(',')
-colorlist_2 = sequences_2.split(',')
+colorlist_1 = set(sequences_1.split(','))
+colorlist_2 = set(sequences_2.split(','))
 
-result = set()
-for color in colorlist_1:
-    if color not in colorlist_2:
-        result.add(color)
+result = colorlist_1.difference(colorlist_2)
 
 print(f'colors only in the firste color list are {result}')
