@@ -2,21 +2,20 @@
 and replace the last value for each tuple. The list of tuples
 can be hardcoded. The "replacement" value is entered by user.
 The number of elements in the tuples must be different.'''
-'''Напишіть сценарій, який запускатиме список кортежів
-і замінюватиме останнє значення для кожного кортежу.
-Список кортежів може бути жорстко закодований.
-Значення "заміщення" вводиться користувачем.
-Кількість елементів у кортежах має бути різною'''
 
-seperated = input("Please, input in ONLY numbers seperated ONLY by a comma :")
-seperated = seperated.split(',')
-numbers_list = []
+test_list = [
+    ('hey'), ('',), ('ma', 'ke', 'my'),
+    ([''], {}, 67), ('d', 5, True), ('', [])
+]
 
-for i in range(len(seperated)):
-	i = int(seperated[i])
-	numbers_list.append(i)
+value = input('inpur the "replacement" value: ')
+buffer = []
+our_list = []
+for element in test_list:
+    buffer = list(element)
+    buffer.remove(buffer[-1])
+    buffer.append(value)
+    element = tuple(buffer)
+    our_list.append(element)
 
-number_tuple = tuple(numbers_list)
-
-print('list version -', numbers_list)
-print(f'tuple version - {number_tuple}')
+print('New list:', our_list)
