@@ -9,7 +9,7 @@ test_list = [
 
 list_without_empty = []
 for element in test_list:
-    if len(element) != 0:
+    if element:
         list_without_empty.append(element)
 
 print('List without empty elements: ', list_without_empty)

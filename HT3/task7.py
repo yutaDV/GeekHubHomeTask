@@ -14,6 +14,5 @@ while True:
 our_dict = {}
 for i in range(number + 1):
     our_dict[i] = i * i
-    i += i
-
+    
 print('Our dictionary:', our_dict)
