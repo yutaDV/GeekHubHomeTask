@@ -8,7 +8,7 @@ test_list = [
     ([''], {}, 67), ('d', 5, True), ('', [])
 ]
 
-value = input('inpur the "replacement" value: ')
+value = input('Input the "replacement" value: ')
 buffer = []
 our_list = []
 for element in test_list:
@@ -18,4 +18,4 @@ for element in test_list:
     element = tuple(buffer)
     our_list.append(element)
 
-print('New list:', our_list)
+print(f'New list with the last value for each tuple {value}:', our_list)

@@ -13,4 +13,4 @@ dict_new = {}
 for element in (dict_1, dict_2, dict_3):
     dict_new.update(element)
 
-print('A new dictionary:', dict_new)
+print('A new big dictionary:', dict_new)

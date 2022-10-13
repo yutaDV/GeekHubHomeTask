@@ -2,12 +2,17 @@
  В циклі створити умову, яка буде виводити поточне значення,
  якщо остача від ділення на 17 дорівнює 0'''
 
-number = int(input("Please, input a number:  "))
+while True:
+    try:
+        number = int(input("Please, enter a number greater than zero:  "))
+        break
+    except ValueError:
+        print("Oops!!! That was no valid number. Try again...")
 
-if number < 17:
-    print('Sorry, I do not have any result for you')
+if number < 0:
+    print('Sorry, I do not have any results for you')
 else:
-    print('your results:')
+    print('Your results:')
     for i in range(number):
-        if i > 0 and i % 17 == 0:
+        if i % 17 == 0:
             print(i)

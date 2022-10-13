@@ -3,12 +3,19 @@
     P.S. Рік є високосним, якщо він кратний 4, але не кратний 100,
     а також якщо він кратний 400.'''
 
-number = int(input("Please, input a number:  "))
+while True:
+    try:
+        first_year = int(input("Please, input the first year:  "))
+        second_year = int(input("Please, input the second year:  "))
+        break
+    except ValueError:
+        print('Oops!!! That was no valid number. Try again...')
 
-if number < 17:
-    print('Sorry, I do not have any result for you')
-else:
-    print('your results:')
-    for i in range(number):
-        if i > 0 and i % 17 == 0:
-            print(i)
+print(f"Between {first_year}  and {second_year} we have next leap years:  ")
+
+for year in range(first_year, second_year + 1):
+    if year % 400 == 0:
+        print(year)
+    else:
+        if year % 4 == 0 and year % 100 != 0:
+            print(year)
