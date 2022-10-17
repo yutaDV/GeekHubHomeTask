@@ -9,7 +9,7 @@
 def calculator():
     '''Calculator'''
 
-    operators = '+-**//%'
+    operators = ['+', '-', '*', '/', '%', '//', '**']
     while True:
         try:
             number_1 = float(input("Input the  first number:  "))
@@ -19,12 +19,12 @@ def calculator():
             print('Oops!!! This is not a number. Try again...')
         else:
             if operator in operators:
-                if operator in '//%' and number_2 == 0:
+                if operator in ['/', '%', '//'] and number_2 == 0:
                     print('There is not result. Do not / zero!!!Try again.')
                 else:
                     break
             else:
-                print('NOT a valid optrator, input : +, -, *, /, %, //, **:')
+                print('Input operator: +, -, *, /, %, //, **:. Try again.')
     results = {
         '+': number_1 + number_2, '-': number_1 - number_2,
         '*': number_1 * number_2, '/': number_1 / number_2,
