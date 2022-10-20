@@ -18,7 +18,7 @@ def fibonacci():
         return number
     else:
         result = [0, 1]
-        for i in range(0, number + 1):
+        for i in range(number + 1):
             if i == result[-1] + result[-2]:
                 result.append(i)
         return result
