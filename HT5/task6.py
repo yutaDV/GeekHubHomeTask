@@ -7,22 +7,23 @@
    fnc([1, 2, 3, 4, 5], shift=-2) --> [3, 4, 5, 1, 2] '''
 
 
-def shift():
+def shift(our_list: list, shift: int):
 
-    while True:
-        values = input("Please, type values seperated ONLY by a comma :")
-        our_list = values.split(',')
-        try:
-            shift = int(input("Input a number for shift:  "))
-        except ValueError:
-            print('This is invalid value. Input a number:')
-        else:
-            if shift <= len(our_list):
-                break
-            else:
-                print('This is invalid value. Try again:')
     new_list = our_list[-shift:] + our_list[:-shift]
     return new_list
 
 
-print(shift())
+while True:
+    values = input("Please, type values seperated ONLY by a comma :")
+    our_list = values.split(',')
+    try:
+        our_shift = int(input("Input a number for shift:  "))
+    except ValueError:
+        print('This is invalid value. Input a number:')
+    else:
+        if our_shift <= len(our_list):
+            break
+        else:
+            print('This is invalid value. Try again:')
+
+print(shift(our_list, our_shift))

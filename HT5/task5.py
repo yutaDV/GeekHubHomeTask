@@ -2,18 +2,8 @@
  і виводить всі числа Фібоначчі, що не перевищують його '''
 
 
-def fibonacci():
+def fibonacci(number):
 
-    while True:
-        try:
-            number = int(input("Input a number:  "))
-        except ValueError:
-            print('This is invalid value. Input a number:')
-        else:
-            if number >= 0:
-                break
-            else:
-                print('This is invalid value. Try again:')
     if number == 0:
         return number
     else:
@@ -24,4 +14,14 @@ def fibonacci():
         return result
 
 
-print(fibonacci())
+while True:
+    try:
+        number = int(input("Input a number:  "))
+    except ValueError:
+        print('This is invalid value. Input a number:')
+    else:
+        if number >= 0:
+            break
+        else:
+            print('This is invalid value. Try again:')
+print(fibonacci(number))

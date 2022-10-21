@@ -8,25 +8,21 @@
 
 def copies(test_list):
 
-    newlist_0 = [x if x is not True else 'True' for x in test_list]
-    newlist = [x if x is not False else 'False' for x in newlist_0]
-    oreginal_list = []
+    newlist = []
+    for element in test_list:
+        newlist.append((element, (type(element))))
+    original_list = []
     for element in newlist:
-        if element not in oreginal_list:
-            oreginal_list.append(element)
+        if element not in original_list:
+            original_list.append(element)
     result = ''
-    for element in oreginal_list:
-        if element is True:
-            result += f'{True} -> {newlist.count(element)}, '
-        if element is False:
-            result += f'{False} -> {newlist.count(element)}, '
-        else:
-            result += f'{element} -> {newlist.count(element)}, '
+    for element in original_list:
+        result += f'{element[0]} -> {newlist.count(element)}, '
     return f'{result}'
 
 
 test_list = [
-    False, 1, 1, 'foo', [1, 2], 'foo', 56, 55, -111,
+    'True', False, 1, 1, 'foo', [1, 2], 56, 55, -111,
     True, {5: 2}, 'foo', [1, 2], True, {5: 2}, -111, 0
 ]
 print(copies(test_list))

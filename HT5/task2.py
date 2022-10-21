@@ -7,20 +7,20 @@
 яка буде на рахунку, а також її повернути (але округлену до копійок).'''
 
 
-def bank():
+def bank(amount, year, percents=0.1):
     '''The function calculates deposit income'''
 
-    while True:
-        try:
-            amount = float(input("Input the deposit amount:  "))
-            year = int(input("For how many years you want to place your deposit:"))
-        except ValueError:
-            print('This is invalid value. Try again...')
-        else:
-            break
     for i in range(year):
-        amount += amount * 0.1
+        amount += amount * percents
     return round(amount, 2)
 
 
-print(bank())
+while True:
+    try:
+        amount = float(input("Input the deposit amount:  "))
+        year = int(input("For how many years you want to place your deposit:"))
+    except ValueError:
+        print('This is invalid value. Try again...')
+    else:
+        break
+print(bank(amount, year))
