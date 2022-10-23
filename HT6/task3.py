@@ -2,7 +2,7 @@
  створити наступний скрипт:
    а) створити список із парами ім'я/пароль різноманітних видів
     (орієнтуйтесь по правилам своєї функції) - як валідні, так і ні;
-   б) створити цикл, який пройдеться по цьому циклу
+   б) створити цикл, який пройдеться по цьому списку
    і, користуючись валідатором, перевірить ці дані і
    надрукує для кожної пари значень відповідне повідомлення, наприклад:
       Name: vasya
@@ -34,14 +34,17 @@ def validation(username, password):
 
 
 zoo_data = [
-    {'cat': 'cat&mouse2'}, {'hare': '4carrots for breacfest'},
-    {'fox': 'hare'}, {'wolf': 'fox'}, {'bear': 'honey'},
-    {'fox': 'hare'}, {'wolf': 'fox'}, {'bear': 'honey'},
+    {'cat': 'cat&mouse2'}, {'hare': '4carrots_for_breacfest'},
+    {'fox': 'hare'}, {'wolf': 'fox256fo'}, {'be': 'honey12568'},
+    {'fox': 'like4hare'}, {'wolf': 'fox'}, {'dog': 'frendnumber1'},
     {'foxcatmousefoxharewolfoxbearhoneyfoxcatmousefoxhare': '1234gkfl'}
 ]
-username = input('Please, enter your username:  ')
-password = input('Please, enter your password:  ')
-try:
-    print(validation(username, password))
-except Exception as e:
-    print(f'Goodbye {e}')
+
+for element in zoo_data:
+    for key, value in element.items():
+        try:
+            validation(key, value)
+        except Exception as e:
+            print(f'Name:{key}\nPassword:{value}\nStatus:{e}\n   -----')
+        else:
+            print(f'Name:{key}\nPassword:{value}\nStatus:OK\n   -----')
