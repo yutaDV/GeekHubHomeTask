@@ -15,21 +15,27 @@
    P.S. Не забудьте використати блок try/except ;)'''
 
 
+class NonValidUserError(Exception):
+    pass
+
+
 def validation(username, password):
     '''The function checks the correct name and password'''
 
     if len(username) < 3:
-        raise Exception("Your name is too short ")
+        raise NonValidUserError("Your name is too short ")
     elif len(username) > 50:
-        raise Exception("Your name is too long ")
+        raise NonValidUserError("Your name is too long ")
+    elif len(password) < 8:
+        raise NonValidUserError("Your password is too short ")
     i = 0
     for letter in password:
         if letter.isdigit():
             i += 1
     if i == 0:
-        raise Exception("password must have at least one digit ")
+        raise NonValidUserError("password must have at least one digit ")
     elif username in password:
-        raise Exception("The password cannot contain a name ")
+        raise NonValidUserError("The password cannot contain a name ")
     return True
 
 
@@ -44,7 +50,7 @@ for element in zoo_data:
     for key, value in element.items():
         try:
             validation(key, value)
-        except Exception as e:
+        except NonValidUserError as e:
             print(f'Name:{key}\nPassword:{value}\nStatus:{e}\n   -----')
         else:
             print(f'Name:{key}\nPassword:{value}\nStatus:OK\n   -----')

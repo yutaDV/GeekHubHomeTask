@@ -7,21 +7,27 @@
     із відповідним текстом.'''
 
 
+class NonValidUserError(Exception):
+    pass
+
+
 def validation(username, password):
     '''The function checks the correct name and password'''
 
     if len(username) < 3:
-        raise Exception("Your name is too short ")
+        raise NonValidUserError("Your name is too short ")
     elif len(username) > 50:
-        raise Exception("Your name is too long ")
+        raise NonValidUserError("Your name is too long ")
+    elif len(password) < 8:
+        raise NonValidUserError("Your password is too short ")
     i = 0
     for letter in password:
         if letter.isdigit():
             i += 1
     if i == 0:
-        raise Exception("password must have at least one digit ")
+        raise NonValidUserError("password must have at least one digit ")
     elif username in password:
-        raise Exception("The password cannot contain a name ")
+        raise NonValidUserError("The password cannot contain a name ")
     return True
 
 
@@ -29,5 +35,5 @@ username = input('Please, enter your username:  ')
 password = input('Please, enter your password:  ')
 try:
     print(validation(username, password))
-except Exception as e:
+except NonValidUserError as e:
     print(f'Goodbye {e}')
