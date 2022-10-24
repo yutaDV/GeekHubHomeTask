@@ -14,17 +14,17 @@ class NonValidUserError(Exception):
 def validation(username, password):
     '''The function checks the correct name and password'''
 
+    password_digit = 0
+    for letter in password:
+        if letter.isdigit():
+            password_digit += 1
     if len(username) < 3:
         raise NonValidUserError("Your name is too short ")
     elif len(username) > 50:
         raise NonValidUserError("Your name is too long ")
     elif len(password) < 8:
         raise NonValidUserError("Your password is too short ")
-    i = 0
-    for letter in password:
-        if letter.isdigit():
-            i += 1
-    if i == 0:
+    if password_digit == 0:
         raise NonValidUserError("password must have at least one digit ")
     elif username in password:
         raise NonValidUserError("The password cannot contain a name ")
