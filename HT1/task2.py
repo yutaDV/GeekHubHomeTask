@@ -1,1 +1,2 @@
-print ('осноні оперції git робота з git')
+for i in range(1, 100, 0):
+	print(i)
