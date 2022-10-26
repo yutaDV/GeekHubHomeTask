@@ -6,7 +6,7 @@
 def count_string(string):
 
     words = [len(word) for word in string.split(' ')]
-    return(min(words))
+    return min(words)
 
 
 print(count_string('kjhsajkhgd agjhjfd afjhdg'))
