@@ -14,5 +14,12 @@
    1
    .......'''
 
-result = [x for x in range(100) if x // 10 + x % 10 == 10]
-print(result)
+
+def my_generator(sequence):
+
+    while True:
+        for element in sequence:
+            print(element)
+
+
+print(my_generator('123'))
