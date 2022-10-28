@@ -15,8 +15,8 @@
 
 def how_much(st: str):
 
-    result = set(x for x in st if (st.lower()).count(x) > 1)
+    result = set(x for x in st.lower() if (st.lower()).count(x) > 1)
     return len(result)
 
 
-print(how_much('aA11'))
+print(how_much('ABBA'))

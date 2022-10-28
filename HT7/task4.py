@@ -19,7 +19,7 @@ def my_generator(sequence):
 
     while True:
         for element in sequence:
-            print(element)
+            yield element
 
 
 print(my_generator('123'))

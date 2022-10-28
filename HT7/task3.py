@@ -14,24 +14,31 @@ P.P.P.S Не забудьте обробляти невалідні
 ситуації (типу range(1, -10, 5) тощо).'''
 
 
-def my_range(start: int, stop: int, step=1):
+def my_range(a, b=None, step=1):
 
+    if not isinstance(step, int):
+        raise Exception('object cannot be interpreted as an integer')
+    if b is None:
+        if not isinstance(a, int):
+            raise Exception('object cannot be interpreted as an integer')
+        stop, start = a, 0
+    else:
+        if not isinstance(a, int) or not isinstance(b, int):
+            raise Exception('object cannot be interpreted as an integer')
+        start, stop = a, b
     if step == 0:
         raise Exception('arg 3 must not be zero')
-    result = []
-    if step > 0 and start >= stop:
+    if step > 0 and stop > start:
         while start < stop:
-            result.append(start)
+            yield start
             start += step
-        return result
-    if step < 0 and start > stop:
-        while start >= stop:
-            result.append(start)
+    elif step < 0 and start > stop:
+        while start > stop:
+            yield start
             start += step
-        return result
     else:
-        raise Exception('incorrect arguments are entered')
+        raise Exception('Incorrect data entered')
 
 
-for i in my_range(10, 0, -1):
+for i in my_range(10, 0, -3):
     print(i)
