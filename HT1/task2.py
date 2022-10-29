@@ -1,2 +1,6 @@
-for i in range(10, 0, -3):
-	print(i)
+print("File two __name__ is set to: {}" .format(__name__))
+
+if __name__ == "__main__":
+   print("File two executed when ran directly")
+else:
+   print("File two executed when imported")
