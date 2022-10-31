@@ -41,7 +41,7 @@ import datetime
 
 
 def verification(username, user_password):
-    ''' the function checks the password'''
+    ''' the function checks the password// верифікація користувача'''
 
     with open('users.csv', newline='') as file:
         reader = csv.DictReader(file)
@@ -52,7 +52,7 @@ def verification(username, user_password):
 
 
 def greeting():
-    '''the function requests user data returns verified username'''
+    '''the function requests user data returns verified username // вітання користувача'''
 
     attempt = 0
     while attempt < 3:
@@ -68,26 +68,38 @@ def greeting():
 
 
 def menu():
-    ''' choice of action, the fuction returns user_action'''
+    ''' choice of action, the fuction returns user_action// меню'''
     menu = {
         'balance': 'Look at the balance',
         'top_up': 'Top up the balance',
         'get': 'Receiving money',
         'exit': 'Exit'
     }
+    print('Please, choice of action')
+    for key, value in menu.items():
+        print(f'{key} for {value}')
     while True:
-        print('Please, choice of action')
-        for key, value in menu.items():
-            print(f'{key} for {value}')
         user_action = input('Enter one of the actions listed above:')
-        if user_action in menu:
-            return user_action
-        else:
-            print('Oops!!! the action is incorrect. Try again...')
+        user_action in menu
+        for key, value in menu.items():
+            if user_action == key:
+                return key
+        print('Oops!!! the action is incorrect. Try again...')
+
+
+def float_number():
+    '''the function checks whether the entered number is a float and return the number// перевірка введеної суми'''
+
+    while True:
+        try:
+            user_sum = float(input('Enter the amount: '))
+            return round(user_sum, 2)
+        except:
+            print("Oops!!! The amount is incorrect. Try again... ")
 
 
 def balance(username):
-    '''The function looks at the balance'''
+    '''The function looks at the balance// функція перевірки балансу'''
 
     with open(f'{username}_balance.txt') as file:
         result = file.read()
@@ -102,14 +114,9 @@ def balance(username):
 
 
 def top_up(username):
-    '''The function tops up  the user balance'''
+    '''The function tops up  the user balance// поповнення балансу'''
 
-    while True:
-        try:
-            user_sum = float(input('Enter the top-up amount: '))
-            break
-        except:
-            print("Oops!!! The amount is incorrect. Try again... ")
+    user_sum = float_number()
     file_name = f'{username}_balance.txt'
     with open(file_name) as file:
         user_balance = float(file.read())
@@ -127,20 +134,16 @@ def top_up(username):
 
 
 def receiving(username):
-    '''The function receis money  the user balance'''
+    '''The function receis money  the user balance//зняття коштів'''
 
     with open(f'{username}_balance.txt') as file:
         user_balance = float(file.read())
     while True:
-        try:
-            user_sum = float(input('What amount of money you want to receive: '))
-        except:
-            print("Oops!!! The amount is incorrect. Try again... ")
+        user_sum = float_number()
+        if user_sum <= user_balance:
+            break
         else:
-            if user_sum <= user_balance:
-                break
-            else:
-                print("Oops!!! You do not have that amount of money. Try again... ")
+            print("Oops!!! You do not have that amount of money. Try again... ")
     result = user_balance - user_sum
     with open(f'{username}_balance.txt', 'w') as file:
         file.write(f'{result}')
@@ -162,11 +165,15 @@ def start():
         user_action = menu()
     else:
         return "The end"
+    if user_action == 'balance':
+        return balance(username)
+    if user_action == 'top_up':
+        return top_up(username)
+    if user_action == 'get':
+        return receiving(username)
     if user_action == 'exit':
-        return "Good bye"
-    else:
         return "Good bye"
 
 
 if __name__ == "__main__":
-    print(balance('fox'))
+    print(start())
