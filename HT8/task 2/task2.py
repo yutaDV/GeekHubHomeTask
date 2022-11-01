@@ -26,7 +26,7 @@ def open_file(name, amount):
             return f'Invalid arguments, amount cannot be begger than {len_fale}'
         file.seek(0)
         result.append(file.read(amount))
-        file.seek(len_fale // 2)
+        file.seek(len_fale // 2 - amount // 2)
         result.append(file.read(amount))
         file.seek(len_fale - amount)
         result.append(file.read(amount))
@@ -34,4 +34,4 @@ def open_file(name, amount):
 
 
 if __name__ == "__main__":
-    print(open_file('doc_ht8_2.txt', 10))
+    print(open_file('doc_ht8_2.txt', 53))

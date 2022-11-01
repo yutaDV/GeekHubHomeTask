@@ -1,1 +1,1 @@
-The function takes a file and returns 3 parts of it
+The function takes a file and returns 3 parts of it. 
