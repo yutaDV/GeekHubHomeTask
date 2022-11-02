@@ -38,6 +38,7 @@
 import csv
 import json
 import datetime
+import time
 
 
 def verification(username, user_password):
@@ -57,11 +58,11 @@ def greeting():
     attempt = 0
     while attempt < 3:
         username = input('Please, enter your user name:  ')
-        user_password = input('Please, enter your password:  ')
+        user_password = input('Enter your password:  ')
         if verification(username, user_password):
             return username
         else:
-            print("Oops!!! Username or password is incorrect. Try again... ")
+            print("\nOops!!! Username or password is incorrect. Try again... ")
             attempt += 1
     print('The entered data is incorrect, contact the bank')
     return None
@@ -75,11 +76,13 @@ def menu():
         'get': 'Receiving money',
         'exit': 'Exit'
     }
-    print('Please, choice of action')
+    time.sleep(1)
+    print('\nChoice of action')
     for key, value in menu.items():
         print(f'{key} for {value}')
     while True:
-        user_action = input('Enter one of the actions listed above:')
+        time.sleep(1)
+        user_action = input('\nEnter one of the actions listed above:')
         user_action in menu
         for key, value in menu.items():
             if user_action == key:
@@ -88,7 +91,8 @@ def menu():
 
 
 def float_number():
-    '''the function checks whether the entered number is a float and return the number// перевірка введеної суми'''
+    '''the function checks whether the entered number is a float and return
+    the number// перевірка введеної суми'''
 
     while True:
         try:
@@ -130,7 +134,7 @@ def top_up(username):
     }
     with open(f'json.{username}_transactions.JSON', 'a') as file:
         json.dump(to_json, file)
-        return result
+        return 'The action is completed'
 
 
 def receiving(username):
@@ -140,10 +144,10 @@ def receiving(username):
         user_balance = float(file.read())
     while True:
         user_sum = float_number()
-        if user_sum <= user_balance:
+        if 0 < user_sum <= user_balance:
             break
         else:
-            print("Oops!!! You do not have that amount of money. Try again... ")
+            print("Oops!!! You do not have that amount of money. Try again...")
     result = user_balance - user_sum
     with open(f'{username}_balance.txt', 'w') as file:
         file.write(f'{result}')
@@ -154,25 +158,29 @@ def receiving(username):
     }
     with open(f'json.{username}_transactions.JSON', 'a') as file:
         json.dump(to_json, file)
-        return result
+        return 'The action is completed'
 
 
 def start():
     '''workflow of ATM'''
 
+#    result = None 
     username = greeting()
-    if username:
-        user_action = menu()
-    else:
-        return "The end"
-    if user_action == 'balance':
-        return balance(username)
-    if user_action == 'top_up':
-        return top_up(username)
-    if user_action == 'get':
-        return receiving(username)
-    if user_action == 'exit':
-        return "Good bye"
+#    else:
+#        return "The end"
+    while True:
+        if username:
+            user_action = menu()
+            if user_action == 'balance':
+                print(balance(username))
+            if user_action == 'top_up':
+                print(top_up(username))
+            if user_action == 'get':
+                print(receiving(username))
+            if user_action == 'exit':
+                return "Good bye"
+            time.sleep(1)    
+            print('\n Choose the next action or choose ''exit'' to stop')
 
 
 if __name__ == "__main__":
