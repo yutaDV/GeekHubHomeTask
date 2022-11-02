@@ -164,10 +164,7 @@ def receiving(username):
 def start():
     '''workflow of ATM'''
 
-#    result = None 
     username = greeting()
-#    else:
-#        return "The end"
     while True:
         if username:
             user_action = menu()
