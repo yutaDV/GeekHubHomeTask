@@ -183,4 +183,4 @@ def start():
 
 
 if __name__ == "__main__":
-    print(receiving('fox'))
+    print(start())
