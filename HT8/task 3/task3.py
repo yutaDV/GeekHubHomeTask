@@ -83,23 +83,25 @@ def menu():
     while True:
         time.sleep(1)
         user_action = input('\nEnter one of the actions listed above:')
-        user_action in menu
-        for key, value in menu.items():
-            if user_action == key:
-                return key
+        if user_action in menu:
+            return user_action
         print('Oops!!! the action is incorrect. Try again...')
 
 
-def float_number():
+def verification_user_sum():
     '''the function checks whether the entered number is a float and return
     the number// перевірка введеної суми'''
 
     while True:
         try:
             user_sum = float(input('Enter the amount: '))
-            return round(user_sum, 2)
         except:
-            print("Oops!!! The amount is incorrect. Try again... ")
+            print("Oops!!! The amount is incorrect. You amount must be a number. Try again...")
+        else:
+            if user_sum > 0:
+                return round(user_sum, 2)
+            else:
+                print("Oops!!! The amount is incorrect. You amount must be greater than 0. Try again...")
 
 
 def balance(username):
@@ -120,7 +122,7 @@ def balance(username):
 def top_up(username):
     '''The function tops up  the user balance// поповнення балансу'''
 
-    user_sum = float_number()
+    user_sum = verification_user_sum()
     file_name = f'{username}_balance.txt'
     with open(file_name) as file:
         user_balance = float(file.read())
@@ -143,8 +145,8 @@ def receiving(username):
     with open(f'{username}_balance.txt') as file:
         user_balance = float(file.read())
     while True:
-        user_sum = float_number()
-        if 0 < user_sum <= user_balance:
+        user_sum = verification_user_sum()
+        if user_sum <= user_balance:
             break
         else:
             print("Oops!!! You do not have that amount of money. Try again...")
@@ -176,9 +178,9 @@ def start():
                 print(receiving(username))
             if user_action == 'exit':
                 return "Good bye"
-            time.sleep(1)    
+            time.sleep(1)
             print('\n Choose the next action or choose ''exit'' to stop')
 
 
 if __name__ == "__main__":
-    print(start())
+    print(receiving('fox'))

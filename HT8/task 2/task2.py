@@ -17,13 +17,17 @@ def open_file(name, amount):
         return 'Dont found the file'
     else:
         f.close()
+    if not isinstance(amount, int):
+        return 'This is invalid value. The second argument must be a number'
+    if amount < 1:
+        return 'The second argument must be greater than 0'
     with open(name) as file:
         result = []
         len_fale = len(file.read())
         if len_fale == 0:
             return 'The file is emty'
         if len_fale < amount:
-            return f'Invalid arguments, amount cannot be begger than {len_fale}'
+            return f'Invalid arguments, amount cannot be begger than{len_fale}'
         file.seek(0)
         result.append(file.read(amount))
         file.seek(len_fale // 2 - amount // 2)
@@ -34,4 +38,4 @@ def open_file(name, amount):
 
 
 if __name__ == "__main__":
-    print(open_file('doc_ht8_2.txt', 53))
+    print(open_file('doc_ht8_2.txt', -156))
