@@ -1,20 +1,68 @@
-import task2
+conn.execute('''CREATE TABLE USERS
+        (ID INT PRIMARY KEY  NOT NULL,
+        NAME TEXT NOT NULL,
+        PASSWORD TEXT NOT NULL,
+        BALANCE REAL,
+        ADMIN_TOKEN TEXT);''')
+conn.execute('''CREATE TABLE TRANSACTIONS
+        (ID_USER INT  NOT NULL,
+        TIME_DATE TEXT NOT NULL,
+        ACTION TEXT NOT NULL,
+        SUM REAL,
+        NEW_BALANCE REAL );''')
+conn.execute('''CREATE TABLE ATM_BALANCE
+        (DENOMINATION TEXT NOT NULL,
+        NUMBER_OF_BILLS INT,
+        SUM REAL);''')
 
-print("File one __name__ is set to: {}" .format(__name__))
 
-if __name__ == "__main__":
-   print("File one executed when ran directly")
-else:
-   print("File one executed when imported")
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (1, 'hare', 'carrot54', 715, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (2, 'fox', 'hare4567', 1000, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (3, 'wolf', 'fox44fox', 2500, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (4, 'bear', 'honey1256l', 1599876.00, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (5, 'admim', 'admim', 0, 'True')" )
 
-   with open('users.csv', 'w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=['user_name','password'])
-    users_data = [
-        {'user_name':'hare', 'password': 'carrot54'},
-        {'user_name': 'fox', 'password': 'hare4567'},
-        {'user_name': 'wolf', 'password': 'fox44fox'},
-        {'user_name':'bear', 'password': 'honey1256l'}
-    ]
-    writer.writeheader()
-    writer.writerows(users_data)
+import sqlite3
+import csv
+import json
+import datetime
+import time
 
+
+conn = sqlite3.connect('ATM.db')
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (1, 'hare', 'carrot54', 715, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (2, 'fox', 'hare4567', 1000, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (3, 'wolf', 'fox44fox', 2500, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (4, 'bear', 'honey1256l', 1599876.00, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (5, 'admim', 'admim', 0, 'True')" )
+
+
+conn = sqlite3.connect('ATM.db')
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (1, 'hare', 'carrot54', 715, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (2, 'fox', 'hare4567', 1000, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (3, 'wolf', 'fox44fox', 2500, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (4, 'bear', 'honey1256l', 1599876.00, 'False')" )
+conn.execute("INSERT INTO USERS (ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN) \
+    VALUES (5, 'admim', 'admim', 0, 'True')" )
+
+cursor = conn.execute("SELECT ID,NAME,PASSWORD,BALANCE,ADMIN_TOKEN from USERS")
+for row in cursor:
+    print("ID" , row [0])
+    print("NAME" , row [1])
+    print("PASSWORDEN" , row [2])
+    print("IBALANCE" , row [3])
+    print("ADMIN_TOKEN" , row [4], '--------------')
