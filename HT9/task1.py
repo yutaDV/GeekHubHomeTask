@@ -30,13 +30,8 @@
         в репозиторій, що б ми могли його використати'''
 
 import sqlite3
-import csv
-import json
 import datetime
 import time
-
-
-#conn = sqlite3.connect('ATM.db')
 
 
 def user_active():
@@ -52,9 +47,21 @@ def user_active():
         print("Oops!!! The answer is incorrect. Enter YES (for existing user) NO (for new). Try again...")
 
 
+def verification(username, user_password):
+    '''the function checks the password// верифікація користувача'''
+
+    conn = sqlite3.connect('ATM.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME': username})
+    if cur.fetchone()[2] == user_password:
+        conn.commit
+        conn.close()
+        return True
+    else:
+        return False
+
 def greeting():
-    '''the function requests user data returns verified username 
-        // вітання користувача'''
+    '''the function requests user data returns verified username // вітання користувача'''
 
     attempt = 0
     while attempt < 3:
@@ -66,7 +73,7 @@ def greeting():
             print("\nOops!!! Username or password is incorrect. Try again... ")
             attempt += 1
     print('The entered data is incorrect, contact the bank')
-    return None
+    return 'Goodbye!!!'
 
 
 def validation_password(username, password):
@@ -104,6 +111,19 @@ def new_user():
         if validation_password(username, password):
             return username, password
         print("Oops!!! The answer is incorrect. Try again...")
+    return username, password
+
+
+def tramsactions(id_user, action, sum_action, final_sum):
+    '''The commits transactions'''
+
+    conn = sqlite3.connect('ATM.db')
+    cursor = conn.cursor()
+    tpans_params = (id_user, f'{datetime.datetime.now()}', action, sum_action, final_sum,)
+    cursor.execute("INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)", tpans_params)
+    conn.commit()
+    conn.close()
+    return
 
 
 def add_new_user(username, user_password):
@@ -120,17 +140,6 @@ def add_new_user(username, user_password):
     conn.close()
     print('Your registration was successful!!')
     return True
-
-def verification(username, user_password):
-    ''' the function checks the password// верифікація користувача'''
-
-    conn = sqlite3.connect('ATM.db')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM USERS WHERE NAME =:NAME",{'NAME':username})
-    if cur.fetchone()[2] == user_password:
-        return True
-    return False
-    conn.close()
 
 
 def admin_menu():
@@ -194,7 +203,7 @@ def verification_user_sum():
         except:
             print("Oops!!! The amount is incorrect. You amount must be a number. Try again...")
         else:
-            if try_sum > 0:
+            if try_sum >= 10:
                 if try_sum // 10 == 0:
                     user_sum = try_sum
                     return (user_sum, 2)
@@ -203,7 +212,7 @@ def verification_user_sum():
                     print(f'Amount to be processed {user_sum}the rest {try_sum % 10} was returned')
                     return round(user_sum, 2)
             else:
-                print("Oops!!! The amount is incorrect. You amount must be greater than 0. Try again...")
+                print("Oops!!! The amount is incorrect. You amount must be greater than 10. Try again...")
 
 
 def balance(id):
@@ -211,15 +220,11 @@ def balance(id):
 
     conn = sqlite3.connect('ATM.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM USERS WHERE ID =:ID",{'ID': id})
+    cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID': id})
     result = cur.fetchone()[3]
-    conn.close()
-    conn = sqlite3.connect('ATM.db')
-    cursor = conn.cursor()
-    tpans_params = (id, f'{datetime.datetime.now()}', 'Look at the balance', f'sum = {result}', f' final balance {result}',)
-    cursor.execute("INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)", tpans_params)
     conn.commit()
     conn.close()
+    tramsactions(id, 'Looks at the balance', result, result)
     return f'Your belance:{result}'
 
 
@@ -245,13 +250,9 @@ def balance_admin():
     cur = conn.cursor()
     for row in cur.execute("SELECT *FROM ATM_BALANCE"):
         print(row)
-    conn.close()
-    conn = sqlite3.connect('ATM.db')
-    cursor = conn.cursor()
-    tpans_params = (5, f'{datetime.datetime.now()}', 'Look at the balance ATM', f'sum = {total_atm()}', f' final balance {total_atm()}',)
-    cursor.execute("INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)", tpans_params)
     conn.commit()
     conn.close()
+    tramsactions('ATM', 'Looks at the balance ATM', total_atm(), total_atm())
     return f' total sum = {total_atm()}'
 
 
@@ -264,13 +265,39 @@ def top_up(id):
     cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID':id})
     new_balance = cur.fetchone()[3] + user_sum
     cur.execute(f"UPDATE USERS SET BALANCE = {new_balance} WHERE ID = {id}")
-    conn.close()
-    conn = sqlite3.connect('ATM.db')
-    cursor = conn.cursor()
-    tpans_params = (id, f'{datetime.datetime.now()}', 'Top up the balance', f'sum = {user_sum}', f' final balance {new_balance}',)
-    cursor.execute("INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)", tpans_params)
     conn.commit()
     conn.close()
+    tramsactions(id, 'Top up the balance', user_sum, new_balance)
+    return 'The action is completed'
+
+
+def top_up_admin():
+    '''The function tops up  the ATM balance// поповнення балансу ATM'''
+
+    conn = sqlite3.connect('ATM.db')
+    cur = conn.cursor()
+    all_sum = 0
+    for row in cur.execute("SELECT *FROM ATM_BALANCE"):
+        while True:
+            try:
+                amount = int(input(f'Input number top up for {row[0]} - '))
+            except:
+                print("Not correct value. Try again")
+            else:
+                if amount >= 0:
+                    break
+                else:
+                    print("Not correct value. Try again")
+        new_number = row[1] + amount
+        new_sum = row[2] / row[1] * new_number
+        all_sum += new_sum
+        cursor = conn.cursor()
+        cursor.execute(f"UPDATE ATM_BALANCE SET NUMBER_OF_BILLS = {new_number} WHERE DENOMINATION = {row[0]}")
+        cursor.execute(f"UPDATE ATM_BALANCE SET SUM = {new_sum} WHERE DENOMINATION = {row[0]}")
+        conn.commit()
+    conn.commit()
+    conn.close()
+    tramsactions('ATM', 'Top up the balance', all_sum, total_atm())
     return 'The action is completed'
 
 
@@ -281,47 +308,69 @@ def receiving(id):
     cur = conn.cursor()
     cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID':id})
     balance = cur.fetchone()[3]
+    if balance < 10:
+        return 'Sorry, you cannot do it!!'
+    else:
+        while True:
+            user_sum = verification_user_sum()
+            if user_sum < total_atm() and user_sum < balance:
+                break
+            if user_sum > balance:
+                print("Oops! You do not have that amount of money. Try again.")
+            if user_sum > total_atm():
+                print(f"You can withdraw a maximum {total_atm()} Try again...")
+        new_balance = balance - user_sum
+        cur.execute(f"UPDATE USERS SET BALANCE = {new_balance} WHERE ID = {id}")
+        conn.commit()
+        conn.close()
+        tramsactions(id, 'Top up the balance', user_sum, new_balance)
+        return 'The action is completed'
+
+
+def start_admin():
+    '''workflow of ATM for admin'''
+
     while True:
-        user_sum = verification_user_sum()
-        if user_sum < total_atm() and user_sum < balance:
-            break
-        if user_sum > balance:
-            print("Oops!!! You do not have that amount of money. Try again...")
-        if user_sum > total_atm():
-            print(f"You can withdraw a maximum {total_atm()} Try again...")
-    new_balance = balance - user_sum
-    cur.execute(f"UPDATE USERS SET BALANCE = {new_balance} WHERE ID = {id}")
-    conn.close()
-    conn = sqlite3.connect('ATM.db')
-    cursor = conn.cursor()
-    tpans_params = (id, f'{datetime.datetime.now()}', 'Receiving money', f'sum = {user_sum}', f' final balance {new_balance}',)
-    cursor.execute("INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)", tpans_params)
-    conn.commit()
-    conn.close()
-    return 'The action is completed'
+        admin_action = admin_menu()
+        if admin_action == 'balance':
+            print(balance_admin())
+        if admin_action == 'top_up':
+            print(top_up_admin())
+        if admin_action == 'get':
+            print("It will be in the next hometask)))")
+        if admin_action == 'exit':
+            return
+        time.sleep(1)
+    print('\n Choose the next action or choose ''exit'' to stop')
 
 
 def start():
     '''workflow of ATM'''
 
     if user_active() is False:
-        new_user()
+        username, password = new_user()
+        add_new_user(username, password)
     username = greeting()
     user_id = return_id(username)
-    while True:
-        if user_id:
-            user_action = menu()
-            if user_action == 'balance':
-                print(balance(user_id))
-            if user_action == 'top_up':
-                print(top_up(user_id))
-            if user_action == 'get':
-                print(receiving(user_id))
-            if user_action == 'exit':
-                return "Good bye"
-            time.sleep(1)
-            print('\n Choose the next action or choose ''exit'' to stop')
+    if username == 'admin':
+        start_admin()
+        return "Good bye"
+    else:
+        while True:
+            if user_id:
+                user_action = menu()
+                if user_action == 'balance':
+                    print(balance(user_id))
+                if user_action == 'top_up':
+                    print(top_up(user_id))
+                if user_action == 'get':
+                    print(receiving(user_id))
+                if user_action == 'exit':
+                    return "Goodbye"
+                time.sleep(1)
+                print('\n Choose the next action or choose ''exit'' to stop')
 
 
 if __name__ == "__main__":
+
     print(start())

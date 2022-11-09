@@ -11,7 +11,7 @@ conn.execute('''CREATE TABLE TRANSACTIONS
         SUM REAL,
         NEW_BALANCE REAL );''')
 conn.execute('''CREATE TABLE ATM_BALANCE
-        (DENOMINATION TEXT NOT NULL,
+        (DENOMINATION INT NOT NULL,
         NUMBER_OF_BILLS INT,
         SUM REAL);''')
 
