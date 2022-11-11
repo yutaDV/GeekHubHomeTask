@@ -387,7 +387,7 @@ def quantity_limit(par, amount):
         return False
 
 
-def perfect_set(user_sum):
+def perfect_set_2(user_sum):
     '''підбір кількості банкнот для зняття'''
 
     bancnots = min_par_in_atm()
@@ -397,6 +397,22 @@ def perfect_set(user_sum):
             result.append((par, user_sum // par))
             user_sum = user_sum % par
     return result, user_sum
+
+
+def perfect_set(user_sum):
+    '''підбір кількості банкнот для зняття'''
+
+    bancnots = list(min_par_in_atm())
+    result = []
+    for i in range(0, len(bancnots)):
+        test_sum = user_sum
+        bank_shot = bancnots[:(len(bancnots) - i)]
+        for p in bank_shot:
+            if user_sum // p > 0 and quantity_limit(p, test_sum // p):
+                result.append((p, test_sum // p))
+                test_sum = test_sum % p
+        if test_sum == 0:
+            return result, test_sum
     
 
 def red_bal_atm(list_pars):
@@ -439,6 +455,7 @@ def receiving(id):
                 if rest == 0:
                     break
                 else:
+                    super_set, rest = perfect_set_2(user_sum)
                     print(f"Sorry today you can get {user_sum - rest} Try again...")
         new_balance = balance - user_sum
         cur.execute(f"UPDATE USERS SET BALANCE = {new_balance} WHERE ID = {id}")
