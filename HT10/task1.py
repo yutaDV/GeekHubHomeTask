@@ -179,7 +179,7 @@ def return_id(username):
 
     conn = sqlite3.connect('ATM.db')
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM USERS WHERE NAME = '{username}'")
+    cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME':username})
     user_id = cur.fetchone()[0]
     conn.close()
     return user_id
@@ -308,7 +308,7 @@ def top_up(id):
     user_sum = verification_user_sum()
     cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID' :id})
     new_balance = cur.fetchone()[3] + user_sum
-    cur.execute(f"UPDATE USERS SET BALANCE = {new_balance} WHERE ID = {id}")
+    cur.execute("UPDATE USERS SET BALANCE =:BAL WHERE ID =:ID", {'BAL':new_balance, 'ID':id})
     conn.commit()
     conn.close()
     tramsactions(id, 'Top up the balance', user_sum, new_balance)
@@ -417,7 +417,7 @@ def second_set(user_sum):
     count = 0
     amount_min = quantity_limit(min_bank_atm())
     for i in range(amount_min):
-        if amount_min > 1:
+        if amount_min > 1 and count >= amount_min:
             user_sum -= min_bank_atm()
             count += 1
             result, rest = perfect_set(user_sum)
@@ -429,6 +429,27 @@ def second_set(user_sum):
 
                 return result
     return None
+
+
+def third_set(user_sum):
+    '''підбір кількості банкнот для зняття, шляхом відмови від найбільшої'''
+
+    bancnots = banknotes_in_atm()
+    for i in range(0, len(bancnots)):
+        bank_shot = bancnots[i:(len(bancnots))]
+        result = []
+        test_sum = user_sum
+        for p in range(0, len(bank_shot)):
+            amount = test_sum // bank_shot[p]
+            amount_atm = quantity_limit(bank_shot[p])
+            if test_sum == 0:
+                return result
+            if amount_atm >= amount > 0:
+                result.append((bank_shot[p], amount))
+                test_sum = test_sum % bank_shot[p]
+            if amount > amount_atm:
+                result.append((bank_shot[p], amount_atm))
+                test_sum -= (bank_shot[p] * amount_atm)
 
 
 def red_bal_atm(list_pars):
@@ -481,6 +502,9 @@ def receiving(id):
                     break
                 elif second_set(user_sum):
                     super_set = second_set(user_sum)
+                    break
+                elif third_set(user_sum):
+                    super_set = third_set(user_sum)
                     break
                 else:
                     print(f"Sorry today you can get {user_sum - rest} Try again...")
@@ -583,3 +607,4 @@ def start():
 if __name__ == "__main__":
 
     print(start())
+   

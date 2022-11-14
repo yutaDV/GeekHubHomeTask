@@ -1,24 +1,16 @@
-'''TASK  #1. . Write a script that will run through a list of tuples
-and replace the last value for each tuple. The list of tuples
-can be hardcoded. The "replacement" value is entered by user.
-The number of elements in the tuples must be different.'''
+'''HT 11 TASK  #2. Створити клас Person, в якому буде присутнім метод 
+    __init__ який буде приймати якісь аргументи, які зберігатиме
+    в відповідні змінні.
+    - Методи, які повинні бути в класі Person - show_age, print_name,
+       show_all_information'''
 
-test_list = [
-    ('hey'), ('',), ('ma', 'ke', 'my'), {}, (),
-    ([''], {}, 67), ('d', 5, True), ('', [])
-]
 
-value = input('Input the "replacement" value: ')
-buffer = []
-our_list = []
-for element in test_list:
-    if element:
-        buffer = list(element)
-        buffer.remove(buffer[-1])
-        buffer.append(value)
-        element = tuple(buffer)
-        our_list.append(element)
-    else:
-        our_list.append(element)
+class Person:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
 
-print(f'New list with the last value for each tuple {value}:', our_list)
+p1 = Person("John", 36)
+
+print(p1.name)
+print(p1.age)
