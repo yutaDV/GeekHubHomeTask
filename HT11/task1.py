@@ -16,12 +16,8 @@
     ...
 - Додати документування в клас (можете почитати цю статтю:'''
 
-''' ВЕЛИКА ЙМОВІРНІСТЬ ЩО Я ЗОВСІМ НЕ ЗРОЗУМІЛА ДАНЕ ЗАВДАННЯ, ПРОТЕ
-НЕ ГОДИТЬСЯ ПРОСИТИ ДОПОМОГИ НЕ СПРОБУВАВШИ ЗРОБИТИ САМОСТІЙНО '''
 
-
-class MathOperations:
-    last_result = None
+class MathOper:
 
     """The class performs arithmetic operations with two numbers +, -, /, *
 
@@ -29,46 +25,46 @@ class MathOperations:
     which are the arguments of mathematical operations, the other two
     are the default - None that store the current and previous result """
 
-    def __init__(self, number_1, number_2, last_result=None, result=None):
+    def __init__(self, last_result=None, result=None):
         """the constructor of a class describes the attributes of the class"""
-        if isinstance(number_1, float) or isinstance(number_1, int):
-            self.number_1 = number_1
-        else:
-            raise TypeError('number must be of type float or int')
+        self.result = result
+        self.last_result = None
 
-        if isinstance(number_2, float) or isinstance(number_2, int):
-            self.number_2 = number_2
-        else:
-            raise TypeError('number must be of type float or int')
-        self.result = None
-        self.last_result = self.result
-        """saving the previous result"""
-
-    def add(self):
+    def add(self, number_1, number_2):
         """ a simple function adds two numbers"""
-        self.result = self.number_1 + self.number_2
+        self.last_result = self.result
+        self.result = number_1 + number_2
         return self.result
 
-    def subtraction(self):
+    def subtraction(self, number_1, number_2):
         """ a simple function subtracts the second number from the first"""
-        self.result = self.number_1 - self.number_2
+        self.last_result = self.result
+        self.result = number_1 - number_2
         return self.result
 
-    def multiplication(self):
+    def multi(self, number_1, number_2):
         """a simple function multiplies two numbers"""
-        self.result = self.number_1 * self.number_2
+        self.last_result = self.result
+        self.result = number_1 * number_2
         return self.result
 
-    def division(self):
+    def division(self, number_1, number_2):
         """ a simple function performs multiplication and division,
         in case of division by 0 a warning"""
-        if self.number_2 == 0:
+        self.last_result = self.result
+        if number_2 == 0:
             return 'division by 0 is not allowed'
         else:
-            self.result = self.number_1 * self.number_2
+            self.result = number_1 * number_2
         return self.result
 
 
-numbers1 = MathOperations(1, 2)
-numbers2 = MathOperations(1, 0)
-numbers3 = MathOperations(1, 5)
+set_1 = MathOper()
+
+print(set_1.last_result)
+set_1.add(1, 1)
+print(set_1.last_result)
+set_1.multi(2, 3)
+print(set_1.last_result)
+set_1.multi(3, 4)
+print(set_1.last_result)
