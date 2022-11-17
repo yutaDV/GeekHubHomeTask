@@ -266,7 +266,6 @@ class Atm():
             cur.execute("UPDATE USERS SET BALANCE =:BALANCE WHERE ID =:ID", {'BALANCE': new_balance, 'ID': self.user_id})
             conn.commit()
             conn.close()
-            print(f'')
             self.red_bal_atm(super_set)
             self.print_banknots(super_set)
             self.trans.transactions(self.user_id, 'Top up the balance', user_sum, new_balance)
