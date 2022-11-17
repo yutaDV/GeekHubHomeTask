@@ -8,16 +8,23 @@ import time
 import random
 
 
-class Customers():
+class Customers:
+    '''The class whose objects are ATM users
+
+    Attributes -  username, user_password that identify the user. 
+    The user_id attribute is unique and assigned to the client for
+    further operations at the ATM. The class contains methods for
+    verifying and erasing the user.'''
     user_id = None
     admin_token = False
 
-    def __init__(self, username, user_password, ):
+    def __init__(self, username, user_password):
         self.username = username
         self.user_password = user_password
 
     def verification(self):
-        '''the function checks the password// верифікація користувача'''
+        '''the function verifies the correctness of the entered user
+         login and password'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -32,8 +39,8 @@ class Customers():
         except:
             return False
 
-    def validation_password(self, username, user_password):
-        '''The function checks the correct name and password for new user'''
+    def validation_password(self):
+        '''The function checks the correct name and password for а new user'''
 
         password_digit = 0
         for letter in self.user_password:
@@ -57,9 +64,8 @@ class Customers():
                 return False
             return True
 
-    def bonus_draw(self, username=None, user_password=None):
-        '''the function draws 1,000 hryvnias to the balance for a new user//
-        функція розігрує 1000 гривень на баланс для нового користувача'''
+    def bonus_draw(self):
+        '''the function draws 1,000 hryvnias to the balance for a new user'''
 
         print("\nYou have the honor of winning 1000 hryvnias for your balance")
         time.sleep(1)
@@ -79,8 +85,7 @@ class Customers():
             return False
 
     def new_user(self):
-        ''' The function registrations of new user// рестрація нового
-         користувача первірка паролю та імені на валідність'''
+        ''' The function registrations of а new user'''
 
         if self.validation_password(self.username, self.user_password):
             print("Super!!! You did it.")
@@ -121,16 +126,20 @@ class Customers():
         return user_id
 
 
-class Atm():
+class Atm:
+    '''A class whose objects are actions that can be performed in ATM
 
-    def __init__(self, user_id, user_balance=None, transactions=None):
+    Attributes - user_id accesses the user's balance
+    The class contains methods for checking the increase and decrease
+    of the user's balance, the total balance of the Atm.'''
+
+    def __init__(self, user_id):
         self.user_id = user_id
-        self.selfuser_balance = None
-        self.trans = Transactions(user_id, None, None, None)
+        self.trans = Transactions()
 
     def verification_user_sum(self):
         '''the function checks whether the entered number is a float and return
-        the number// перевірка введеної суми'''
+        the number'''
 
         while True:
             try:
@@ -138,7 +147,7 @@ class Atm():
             except:
                 print("Oops!!! The amount is incorrect. You amount must be a number. Try again...")
             else:
-                if try_sum >= self.min_bank_atm(self):
+                if try_sum >= self.min_bank_atm():
                     if try_sum // 10 == 0:
                         user_sum = try_sum
                         return round(user_sum, 2)
@@ -162,7 +171,7 @@ class Atm():
         return result
 
     def top_up(self):
-        '''The function tops up  the user balance// поповнення балансу'''
+        '''The function tops up  the user balance'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -176,28 +185,28 @@ class Atm():
         return 'The action is completed'
 
     def perfect_set(self, user_sum):
-        '''ідеальний набір банкнот для видачі  від бульшого до меншого
-         з урахуванням кільклсті банкнот'''
+        '''the function selects the ideal set of banknotes for issuing
+        from the largest to the smallest taking into account the number
+        of banknotes in the ATM.'''
 
-        bancnots = self.banknotes_in_atm(self)
+        bancnots = self.banknotes_in_atm()
         result = []
-        for par in bancnots:
-            amount = user_sum // par
-            amount_atm = self.quantity_limit(par)
+        for banknote in bancnots:
+            amount = user_sum // banknote
+            amount_atm = self.quantity_limit(banknote)
             if amount_atm >= amount > 0:
-                result.append((par, amount))
-                user_sum = user_sum % par
+                result.append((banknote, amount))
+                user_sum = user_sum % banknote
             if amount > 0 and amount > amount_atm:
-                result.append((par, amount_atm))
-                user_sum -= (par * amount_atm)
+                result.append((banknote, amount_atm))
+                user_sum -= (banknote * amount_atm)
             if user_sum == 0:
                 return result, user_sum
         return result, user_sum
 
     def second_set(self, user_sum):
-        '''якщо перший варіант провалився то резервуємо одну наманшу купюру і
-         перевіряємо чи все ок, якщо ні то ше мінус 1 (відмінусовані купюри
-        додати вкінці, якщо такого не трапилось то Nane)'''
+        '''The function uses the second method of selecting bills.
+        The function reserves the smallest bill for further issuance.'''
 
         count = 0
         amount_min = self.quantity_limit(self.min_bank_atm())
@@ -215,7 +224,8 @@ class Atm():
         return None
 
     def third_set(self, user_sum):
-        '''підбір кількості банкнот для зняття, шляхом відмови від найбіль.'''
+        '''The function uses the third method of selecting bills.
+        The function excludes the largest bill from the set.'''
 
         bancnots = self.banknotes_in_atm()
         for i in range(0, len(bancnots)):
@@ -235,7 +245,7 @@ class Atm():
                     test_sum -= (bank_shot[p] * amount_atm)
 
     def receiving(self):
-        '''The function receis money  the user balance//зняття коштів'''
+        '''The function receis money  the user balance'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -248,7 +258,7 @@ class Atm():
                 user_sum = self.verification_user_sum()
                 if user_sum > balance:
                     print("Oops! You do not have that amount of money. Try again.")
-                if user_sum > self.total_atm(self):
+                if user_sum > self.total_atm():
                     print(f"You can withdraw a maximum {self.total_atm()} Try again...")
                 if user_sum < self.total_atm() and user_sum < balance:
                     super_set, rest = self.perfect_set(user_sum)
@@ -284,8 +294,8 @@ class Atm():
         self.trans.transactions(self.user_id, 'Print transaction history', None, None)
         return 'The action is completed'
 
-    def banknotes_in_atm(self, user_id=None):
-        '''the function return a list with real par in ATM'''
+    def banknotes_in_atm(self):
+        '''the function return a list with real banknotes in ATM'''
 
         result = []
         conn = sqlite3.connect('ATM.db')
@@ -297,9 +307,8 @@ class Atm():
         conn.close()
         return list(reversed(result))
 
-    def min_bank_atm(self, iuser_id=None):
-        '''the function returns the minimum par in ATM//
-        мінімальна купюра в банкоматі'''
+    def min_bank_atm(self):
+        '''the function returns the minimum banknote in ATM'''
 
         result = []
         conn = sqlite3.connect('ATM.db')
@@ -312,8 +321,8 @@ class Atm():
         min_sum = min(result)
         return min_sum
 
-    def total_atm(self, user_id=None):
-        '''The function returns the total sum ATM//залишок в банкоматі'''
+    def total_atm(self):
+        '''The function returns the total sum ATM'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -325,9 +334,8 @@ class Atm():
         conn.close()
         return total_atm
 
-    def take_admin(self, user_id='admin'):
-        '''The function withdraw from the ATM balance//
-        зняття грошей з балансу ATM'''
+    def take_admin(self):
+        '''The function withdraw from the ATM balance'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -355,22 +363,21 @@ class Atm():
         self.trans.transactions('admin', 'Take money of  the ATM balance', all_sum, self.total_atm())
         return 'The action is completed'
 
-    def quantity_limit(self, par):
+    def quantity_limit(self, banknote):
         '''the function checks whether such amount of banknotes
-        is available in the ATB//допустима кількість купюр в банкоматі'''
+        is available in the ATM'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
         for row in cur.execute("SELECT *FROM ATM_BALANCE"):
-            if row[0] == par:
+            if row[0] == banknote:
                 result = row[1]
         conn.commit()
         conn.close()
         return result
 
-    def balance_admin(self, user_id='admin'):
-        '''The function looks at the balance ATM for admin//
-        функція перевірки балансу ATM'''
+    def balance_admin(self):
+        '''The function looks at the balance ATM for admin'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -379,10 +386,10 @@ class Atm():
         conn.commit()
         conn.close()
         self.trans.transactions('admin', 'Looks at the balance ATM', self.total_atm(), self.total_atm())
-        return f' total sum = {self.total_atm(self)}'
+        return f' total sum = {self.total_atm()}'
 
-    def top_up_admin(self, user_id='admin'):
-        '''The function tops up  the ATM balance// поповнення балансу ATM'''
+    def top_up_admin(self):
+        '''The function tops up  the ATM balance'''
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
@@ -409,10 +416,10 @@ class Atm():
         self.trans.transactions('admin', 'Top up the balance', all_sum, self.total_atm())
         return 'The action is completed'
 
-    def red_bal_atm(self, list_pars, user_id=None):
-        '''Коригування залишків АТМ після зняття коштів'''
+    def red_bal_atm(self, list_banknotes):
+        '''The function adjusts ATM balances after withdrawal'''
 
-        for element in list_pars:
+        for element in list_banknotes:
             conn = sqlite3.connect('ATM.db')
             cur = conn.cursor()
             for row in cur.execute("SELECT *FROM ATM_BALANCE"):
@@ -426,15 +433,15 @@ class Atm():
             conn.commit()
             conn.close()
 
-    def print_banknots(self, list_pars, user_id=None):
-        '''друк банкнот які було видано'''
+    def print_banknots(self, list_banknotes):
+        '''The function prints bills that have been issued'''
 
         print('You receive:')
-        for par in list_pars:
-            print(f'{par[1]} banknotes of {par[0]} hryvnias')
+        for banknote in list_banknotes:
+            print(f'{banknote[1]} banknotes of {banknote[0]} hryvnias')
         pass
 
-    def trans_history_admin(self, user_id='admin'):
+    def trans_history_admin(self):
         ''' Print transaction history for admin'''
 
         conn = sqlite3.connect('ATM.db')
@@ -447,13 +454,8 @@ class Atm():
         return 'The action is completed'
 
 
-class Transactions():
-
-    def __init__(self, id_user, action, sum_action, final_sum):
-        self.id_user = id_user
-        self.action = action
-        self.sum_action = sum_action
-        self.final_sum = sum_action
+class Transactions:
+    '''The class creates and stores ATM transactions'''
 
     def transactions(self, id_user, action, sum_action, final_sum):
         '''The commits transactions'''
@@ -468,7 +470,7 @@ class Transactions():
 
 
 def welcome_menu():
-    ''' the function starts//'''
+    ''' the function starts'''
     menu = {
         'start': 'For login',
         'reg': 'For registration',
@@ -488,7 +490,7 @@ def welcome_menu():
 
 
 def admin_menu():
-    ''' choice of action, the fuction returns user_action// меню інкасатора'''
+    '''The fuction returns admin_action and choices of action'''
     admin_menu = {
         'balance': 'Look at the balance_ATM',
         'top_up': 'Top up the balance_ATM',
@@ -509,7 +511,7 @@ def admin_menu():
 
 
 def menu():
-    ''' choice of action, the fuction returns user_action// меню'''
+    '''The fuction returns user_action and choices of action'''
 
     menu = {
         'balance': 'Look at the balance',
@@ -531,8 +533,7 @@ def menu():
 
 
 def greeting():
-    '''the function requests user data returns verified username
-        // вітання користувача'''
+    '''the function requests user data returns verified username'''
 
     attempt = 0
     while attempt < 3:
