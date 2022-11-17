@@ -2,10 +2,14 @@
     __init__ який буде приймати якісь аргументи, які зберігатиме
     в відповідні змінні.
     - Методи, які повинні бути в класі Person - show_age, print_name,
-       show_all_information'''
+       show_all_information
+    - Створіть 2 екземпляри класу Person та в кожному з екземплярів
+      створіть атрибут profession (його не має інсувати під час ініціалізації
+       в самому класі) та виведіть його на екран (прінтоніть)'''
 
 
 class Person:
+    profession = None
 
     def __init__(self, name, age, gender, pets):
         self.name = name
@@ -29,12 +33,14 @@ class Person:
 
 
 p1 = Person("John", 23, 'men', 'cat')
-p2 = Person("Max", 36, 'men', 'cat')
-p3 = Person("MAry", 15, 'men', 'cat')
+p2 = Person("Max", 36, 'men', 'dog')
+p1.profession = 'doctor'
+p2.profession = 'teacher'
 
 print(p1.name)
-print(p2.is_aduit(p3.age))
-print(p1)
+print(p2.is_aduit(p2.age))
+print(p1.profession)
+print(p2.profession)
 print(p1.show_age())
 print(p1.is_aduit(p1.age))
 print(p2.show_all_information())

@@ -18,17 +18,13 @@
 
 
 class MathOper:
-
+    result = None
+    last_result = None
     """The class performs arithmetic operations with two numbers +, -, /, *
 
     The class includes four objects, two of which have int or float
     which are the arguments of mathematical operations, the other two
     are the default - None that store the current and previous result """
-
-    def __init__(self, last_result=None, result=None):
-        """the constructor of a class describes the attributes of the class"""
-        self.result = result
-        self.last_result = None
 
     def add(self, number_1, number_2):
         """ a simple function adds two numbers"""
@@ -65,6 +61,8 @@ print(set_1.last_result)
 set_1.add(1, 1)
 print(set_1.last_result)
 set_1.multi(2, 3)
+print(set_1.last_result)
+set_1.multi(3, 4)
 print(set_1.last_result)
 set_1.multi(3, 4)
 print(set_1.last_result)
