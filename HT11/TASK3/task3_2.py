@@ -23,7 +23,7 @@ class Customers():
         cur = conn.cursor()
         try:
             cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME': self.username})
-            if cur.fetchone()[2] ==  self.user_password:
+            if cur.fetchone()[2] == self.user_password:
                 conn.commit
                 conn.close()
                 return True
@@ -32,9 +32,8 @@ class Customers():
         except:
             return False
 
-    
     def validation_password(self, username, user_password):
-        '''The function checks the correct name and password for new user?????'''
+        '''The function checks the correct name and password for new user'''
 
         password_digit = 0
         for letter in self.user_password:
@@ -62,7 +61,7 @@ class Customers():
         '''the function draws 1,000 hryvnias to the balance for a new user//
         функція розігрує 1000 гривень на баланс для нового користувача'''
 
-        print("\nYou have the honor of winning 1000 hryvnias for your balance!")
+        print("\nYou have the honor of winning 1000 hryvnias for your balance")
         time.sleep(1)
         print("Three")
         time.sleep(1)
@@ -116,7 +115,7 @@ class Customers():
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
-        cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME':self.username})
+        cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME': self.username})
         user_id = cur.fetchone()[0]
         conn.close()
         return user_id
@@ -124,30 +123,31 @@ class Customers():
 
 class Atm():
 
-    def __init__(self, user_id, user_balance=None):
+    def __init__(self, user_id, user_balance=None, transactions=None):
         self.user_id = user_id
         self.selfuser_balance = None
-        
-    def verification_user_sum(self):
-            '''the function checks whether the entered number is a float and return
-            the number// перевірка введеної суми'''
+        self.trans = Transactions(user_id, None, None, None)
 
-            while True:
-                try:
-                    try_sum = float(input('Enter the amount: '))
-                except:
-                    print("Oops!!! The amount is incorrect. You amount must be a number. Try again...")
-                else:
-                    if try_sum >= self.min_bank_atm(self):
-                        if try_sum // 10 == 0:
-                            user_sum = try_sum
-                            return (user_sum, 2)
-                        else:
-                            user_sum = try_sum - try_sum % 10
-                            print(f'Amount to be processed {user_sum}the rest {try_sum % 10} was returned')
-                            return round(user_sum, 2)
+    def verification_user_sum(self):
+        '''the function checks whether the entered number is a float and return
+        the number// перевірка введеної суми'''
+
+        while True:
+            try:
+                try_sum = float(input('Enter the amount: '))
+            except:
+                print("Oops!!! The amount is incorrect. You amount must be a number. Try again...")
+            else:
+                if try_sum >= self.min_bank_atm(self):
+                    if try_sum // 10 == 0:
+                        user_sum = try_sum
+                        return round(user_sum, 2)
                     else:
-                        print(f"Oops!!! The amount is incorrect. You amount must be greater than {self.min_bank_atm()}. Try again...")
+                        user_sum = try_sum - try_sum % 10
+                        print(f'Amount to be processed {user_sum}the rest {try_sum % 10} was returned')
+                        return round(user_sum, 2)
+                else:
+                    print(f"Oops!!! The amount is incorrect. You amount must be greater than {self.min_bank_atm()}. Try again...")
 
     def balance(self):
         '''The function looks at the balance// функція перевірки балансу'''
@@ -158,7 +158,7 @@ class Atm():
         result = cur.fetchone()[3]
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, self.user_id, 'Looks at the balance', result, result)
+        self.trans.transactions(self.user_id, 'Looks at the balance', result, result)
         return result
 
     def top_up(self):
@@ -167,12 +167,12 @@ class Atm():
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
         user_sum = self.verification_user_sum()
-        cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID':self.user_id})
+        cur.execute("SELECT * FROM USERS WHERE ID =:ID", {'ID': self.user_id})
         user_balance = cur.fetchone()[3] + user_sum
-        cur.execute("UPDATE USERS SET BALANCE =:BAL WHERE ID =:ID", {'BAL':user_balance, 'ID':self.user_id})
+        cur.execute("UPDATE USERS SET BALANCE =:BAL WHERE ID =:ID", {'BAL':user_balance, 'ID': self.user_id})
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, self.user_id, 'Top up the balance', user_sum, user_balance)
+        self.trans.transactions(self.user_id, 'Top up the balance', user_sum, user_balance)
         return 'The action is completed'
 
     def perfect_set(self, user_sum):
@@ -183,7 +183,7 @@ class Atm():
         result = []
         for par in bancnots:
             amount = user_sum // par
-            amount_atm = self.quantity_limit(self,par)
+            amount_atm = self.quantity_limit(par)
             if amount_atm >= amount > 0:
                 result.append((par, amount))
                 user_sum = user_sum % par
@@ -211,12 +211,11 @@ class Atm():
                         count += result[-1][1]
                     result.pop()
                     result.append((self.min_bank_atm(), count))
-
                     return result
         return None
 
     def third_set(self, user_sum):
-        '''підбір кількості банкнот для зняття, шляхом відмови від найбільшої'''
+        '''підбір кількості банкнот для зняття, шляхом відмови від найбіль.'''
 
         bancnots = self.banknotes_in_atm()
         for i in range(0, len(bancnots)):
@@ -252,7 +251,7 @@ class Atm():
                 if user_sum > self.total_atm(self):
                     print(f"You can withdraw a maximum {self.total_atm()} Try again...")
                 if user_sum < self.total_atm() and user_sum < balance:
-                    super_set, rest = self.perfect_set( user_sum)
+                    super_set, rest = self.perfect_set(user_sum)
                     if rest == 0:
                         break
                     elif self.second_set(user_sum):
@@ -264,13 +263,13 @@ class Atm():
                     else:
                         print(f"Sorry today you can get {user_sum - rest} Try again...")
             new_balance = balance - user_sum
-            cur.execute("UPDATE USERS SET BALANCE =:BALANCE WHERE ID =:ID", {'BALANCE':new_balance,'ID':self.user_id})
+            cur.execute("UPDATE USERS SET BALANCE =:BALANCE WHERE ID =:ID", {'BALANCE': new_balance, 'ID': self.user_id})
             conn.commit()
             conn.close()
             print(f'')
             self.red_bal_atm(super_set)
             self.print_banknots(super_set)
-            Tramsactions.tramsactions(Tramsactions, self.user_id, 'Top up the balance', user_sum, new_balance)
+            self.trans.transactions(self.user_id, 'Top up the balance', user_sum, new_balance)
             return 'The action is completed'
 
     def trans_history_user(self):
@@ -283,7 +282,7 @@ class Atm():
                 print(f'Date - {row[1]}, action - {row[2]},sum {row[3]}, final_sum {row[4]}')
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, self.user_id, 'Print transaction history', None, None)
+        self.trans.transactions(self.user_id, 'Print transaction history', None, None)
         return 'The action is completed'
 
     def banknotes_in_atm(self, user_id=None):
@@ -349,12 +348,12 @@ class Atm():
             new_sum = row[0] * new_number
             all_sum += amount * row[0]
             cursor = conn.cursor()
-            cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:NUM WHERE DENOMINATION =:DEN", {'NUM':new_sum,'DEN':row[0]})
-            cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:DEN", {'SUM':new_sum,'DEN':row[0]})
+            cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:NUM WHERE DENOMINATION =:DEN", {'NUM': new_sum, 'DEN': row[0]})
+            cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:DEN", {'SUM': new_sum, 'DEN': row[0]})
             conn.commit()
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions,'admin', 'Take money of  the ATM balance', all_sum, self.total_atm(self))
+        self.trans.transactions('admin', 'Take money of  the ATM balance', all_sum, self.total_atm())
         return 'The action is completed'
 
     def quantity_limit(self, par):
@@ -380,7 +379,7 @@ class Atm():
             print(row)
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, 'admin', 'Looks at the balance ATM', self.total_atm(self), self.total_atm(self))
+        self.trans.transactions('admin', 'Looks at the balance ATM', self.total_atm(), self.total_atm())
         return f' total sum = {self.total_atm(self)}'
 
     def top_up_admin(self, user_id='admin'):
@@ -404,11 +403,11 @@ class Atm():
             new_sum = row[0] * new_number
             all_sum += amount * row[0]
             cursor = conn.cursor()
-            cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:BIL WHERE DENOMINATION =:DEN",{'BIL':new_number,'DEN':row[0]})
-            cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:DEN",{'SUM':new_sum,'DEN':row[0]})
+            cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:BIL WHERE DENOMINATION =:DEN", {'BIL': new_number, 'DEN': row[0]})
+            cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:DEN", {'SUM': new_sum, 'DEN': row[0]})
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, 'admin', 'Top up the balance', all_sum, self.total_atm(self))
+        self.trans.transactions('admin', 'Top up the balance', all_sum, self.total_atm())
         return 'The action is completed'
 
     def red_bal_atm(self, list_pars, user_id=None):
@@ -422,12 +421,12 @@ class Atm():
                     new_number = row[1] - element[1]
                     new_sum = row[0] * new_number
                     cursor = conn.cursor()
-                    cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:NUM WHERE DENOMINATION =:PAR",{'NUM':new_number,'PAR':row[0]})
-                    cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:PAR", {'SUM':new_sum,'PAR':row[0]})
+                    cursor.execute("UPDATE ATM_BALANCE SET NUMBER_OF_BILLS =:NUM WHERE DENOMINATION =:PAR", {'NUM': new_number, 'PAR': row[0]})
+                    cursor.execute("UPDATE ATM_BALANCE SET SUM =:SUM WHERE DENOMINATION =:PAR", {'SUM': new_sum, 'PAR': row[0]})
                     conn.commit()
             conn.commit()
             conn.close()
-    
+
     def print_banknots(self, list_pars, user_id=None):
         '''друк банкнот які було видано'''
 
@@ -445,75 +444,11 @@ class Atm():
             print(row)
         conn.commit()
         conn.close()
-        Tramsactions.tramsactions(Tramsactions, 'admin', 'Print transaction history', self.total_atm(self), self.total_atm(self))
+        self.trans.transactions('admin', 'Print transaction history', self.total_atm(), self.total_atm())
         return 'The action is completed'
 
 
-class Menu():
-    """Обєктами класу є вигляд інтерфейсу АТМ"""
-
-    def welcome_menu():
-        ''' the function starts//'''
-        menu = {
-            'start': 'For login',
-            'reg': 'For registration',
-            'exit': 'Exit'
-        }
-        print('\n************************WELCOME TO OURS ATM *************************************')
-        time.sleep(1)
-        print('\nChoice of action')
-        for key, value in menu.items():
-            print(f'{key} for {value}')
-        while True:
-            time.sleep(1)
-            next_step = input('\nEnter one of the actions listed above:')
-            if next_step in menu:
-                return next_step
-            print('Oops!!! the action is incorrect. Try again...')
-
-    def admin_menu():
-        ''' choice of action, the fuction returns user_action// меню інкасатора'''
-        admin_menu = {
-            'balance': 'Look at the balance_ATM',
-            'top_up': 'Top up the balance_ATM',
-            'get': 'Receiving money_ATM',
-            'pth': 'Print transaction history for admin',
-            'exit': 'Exit'
-        }
-        time.sleep(1)
-        print('\nChoice of action')
-        for key, value in admin_menu.items():
-            print(f'{key} for {value}')
-        while True:
-            time.sleep(1)
-            admin_action = input('\nEnter one of the actions listed above:')
-            if admin_action in admin_menu:
-                return admin_action
-            print('Oops!!! the action is incorrect. Try again...')
-
-    def menu():
-        ''' choice of action, the fuction returns user_action// меню'''
-
-        menu = {
-            'balance': 'Look at the balance',
-            'top_up': 'Top up the balance',
-            'get': 'Receiving money',
-            'pth': 'Print transaction history',
-            'exit': 'Exit'
-        }
-        time.sleep(1)
-        print('\nChoice of action')
-        for key, value in menu.items():
-            print(f'{key} for {value}')
-        while True:
-            time.sleep(1)
-            user_action = input('\nEnter one of the actions listed above:')
-            if user_action in menu:
-                return user_action
-            print('Oops!!! the action is incorrect. Try again...')
-
-
-class Tramsactions():
+class Transactions():
 
     def __init__(self, id_user, action, sum_action, final_sum):
         self.id_user = id_user
@@ -521,7 +456,7 @@ class Tramsactions():
         self.sum_action = sum_action
         self.final_sum = sum_action
 
-    def tramsactions(self, id_user, action, sum_action, final_sum):
+    def transactions(self, id_user, action, sum_action, final_sum):
         '''The commits transactions'''
 
         conn = sqlite3.connect('ATM.db')
@@ -531,6 +466,69 @@ class Tramsactions():
         conn.commit()
         conn.close()
         return
+
+
+def welcome_menu():
+    ''' the function starts//'''
+    menu = {
+        'start': 'For login',
+        'reg': 'For registration',
+        'exit': 'Exit'
+    }
+    print('\n************************WELCOME TO OURS ATM *************************************')
+    time.sleep(1)
+    print('\nChoice of action')
+    for key, value in menu.items():
+        print(f'{key} for {value}')
+    while True:
+        time.sleep(1)
+        next_step = input('\nEnter one of the actions listed above:')
+        if next_step in menu:
+            return next_step
+        print('Oops!!! the action is incorrect. Try again...')
+
+
+def admin_menu():
+    ''' choice of action, the fuction returns user_action// меню інкасатора'''
+    admin_menu = {
+        'balance': 'Look at the balance_ATM',
+        'top_up': 'Top up the balance_ATM',
+        'get': 'Receiving money_ATM',
+        'pth': 'Print transaction history for admin',
+        'exit': 'Exit'
+    }
+    time.sleep(1)
+    print('\nChoice of action')
+    for key, value in admin_menu.items():
+        print(f'{key} for {value}')
+    while True:
+        time.sleep(1)
+        admin_action = input('\nEnter one of the actions listed above:')
+        if admin_action in admin_menu:
+            return admin_action
+        print('Oops!!! the action is incorrect. Try again...')
+
+
+def menu():
+    ''' choice of action, the fuction returns user_action// меню'''
+
+    menu = {
+        'balance': 'Look at the balance',
+        'top_up': 'Top up the balance',
+        'get': 'Receiving money',
+        'pth': 'Print transaction history',
+        'exit': 'Exit'
+    }
+    time.sleep(1)
+    print('\nChoice of action')
+    for key, value in menu.items():
+        print(f'{key} for {value}')
+    while True:
+        time.sleep(1)
+        user_action = input('\nEnter one of the actions listed above:')
+        if user_action in menu:
+            return user_action
+        print('Oops!!! the action is incorrect. Try again...')
 
 
 def greeting():
@@ -555,7 +553,7 @@ def start_user(user_id):
     '''workflow of user'''
 
     while True:
-        user_action = Menu.menu()
+        user_action = menu()
         action = Atm(user_id)
         if user_action == 'balance':
             print(f'Your balance is - {action.balance()}')
@@ -575,7 +573,7 @@ def start_admin():
     '''workflow of ATM for admin'''
 
     while True:
-        admin_action = Menu.admin_menu()
+        admin_action = admin_menu()
         action = Atm('admin')
         if admin_action == 'balance':
             print(action.balance_admin())
@@ -595,7 +593,7 @@ def start():
     '''workflow of ATM'''
 
     while True:
-        next_step = Menu.welcome_menu()
+        next_step = welcome_menu()
         if next_step == 'exit':
             return "Good bye"
         if next_step == 'reg':

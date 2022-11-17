@@ -9,7 +9,6 @@
 
 
 class Person:
-    profession = None
 
     def __init__(self, name, age, gender, pets):
         self.name = name
