@@ -11,12 +11,13 @@ import random
 class Customers:
     '''The class whose objects are ATM users
 
-    Attributes -  username, user_password that identify the user. 
+    Attributes -  username, user_password that identify the user.
     The user_id attribute is unique and assigned to the client for
     further operations at the ATM. The class contains methods for
     verifying and erasing the user.'''
     user_id = None
     admin_token = False
+    user_balance = 0
 
     def __init__(self, username, user_password):
         self.username = username
@@ -31,7 +32,7 @@ class Customers:
         try:
             cur.execute("SELECT * FROM USERS WHERE NAME =:NAME", {'NAME': self.username})
             if cur.fetchone()[2] == self.user_password:
-                conn.commit
+                conn.commit()
                 conn.close()
                 return True
             else:
@@ -48,19 +49,19 @@ class Customers:
                 password_digit += 1
         while True:
             if len(self.username) < 3:
-                print("Your name is too short ")
+                print("Your name is too short.Try again... ")
                 return False
             elif len(self.username) > 50:
-                print("Your name is too long ")
+                print("Your name is too long.Try again. ")
                 return False
             elif len(self.user_password) < 8:
-                print("Your password is too short ")
+                print("Your password is too short.Try again.")
                 return False
             if password_digit == 0:
-                print("password must have at least one digit ")
+                print("password must have at least one digit.Try again. ")
                 return False
             elif self.username in self.user_password:
-                print("The password cannot contain a name ")
+                print("The password cannot contain a name.Try again. ")
                 return False
             return True
 
@@ -87,17 +88,14 @@ class Customers:
     def new_user(self):
         ''' The function registrations of а new user'''
 
-        if self.validation_password(self.username, self.user_password):
+        if self.validation_password():
             print("Super!!! You did it.")
-            if self.bonus_draw(self):
+            if self.bonus_draw():
                 self.user_balance = 1000
-            else:
-                self.user_balance = 0
             print(self.user_balance)
             return True
         else:
             return False
-        print("Oops!!! The answer is incorrect. Try again...")
 
     def add_new_user(self):
         ''' The function adds a new user// функція
@@ -105,10 +103,8 @@ class Customers:
 
         conn = sqlite3.connect('ATM.db')
         cursor = conn.cursor()
-        sum_id = 0
-        for row in cursor.execute("SELECT *FROM USERS"):
-            sum_id += 1
-        params = (sum_id + 1, self.username, self.user_password, self.user_balance, self.admin_token)
+        next_id = len(cursor.execute("SELECT *FROM USERS").fetchall()) + 1
+        params = (next_id, self.username, self.user_password, self.user_balance, self.admin_token)
         cursor.execute("INSERT INTO USERS VALUES (?,?,?,?,?)", params)
         conn.commit()
         conn.close()
@@ -211,7 +207,7 @@ class Atm:
         count = 0
         amount_min = self.quantity_limit(self.min_bank_atm())
         for i in range(amount_min):
-            if amount_min > 1 and count >= amount_min:
+            if count >= amount_min > 1:
                 user_sum -= self.min_bank_atm()
                 count += 1
                 result, rest = self.perfect_set(user_sum)
@@ -369,6 +365,7 @@ class Atm:
 
         conn = sqlite3.connect('ATM.db')
         cur = conn.cursor()
+        result = None
         for row in cur.execute("SELECT *FROM ATM_BALANCE"):
             if row[0] == banknote:
                 result = row[1]
@@ -542,6 +539,7 @@ def greeting():
         customer = Customers(username, user_password)
         if customer.verification():
             return customer
+            print(customer.username, customer.user_password, customer.user_balance)
         else:
             print("\nOops!!! Username or password is incorrect. Try again... ")
             attempt += 1
@@ -586,7 +584,7 @@ def start_admin():
         if admin_action == 'exit':
             return
         time.sleep(1)
-    print('\n Choose the next action or choose ''exit'' to stop')
+        print('\n Choose the next action or choose ''exit'' to stop')
 
 
 def start():
