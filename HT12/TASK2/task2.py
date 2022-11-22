@@ -94,13 +94,12 @@ class Persons:
 
 class Librarian(Persons):
     """The Librarian class is a subclass of Persons"""
-    age = 0
-    user_id = 1
     password = 'admin'
     token = 'admin'
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name, age):
+        super().__init__(name, age)
+        user_id = super().user_id()
 
     def validation_password(self):
         """The function will check the librarian's password"""
@@ -172,7 +171,7 @@ class Action:
      user and book interaction functions."""
 
     def __init__(self, user_id=None):
-        self.user_id = None
+        self.user_id = user_id
 
     def verification(self):
         '''the function verifies the correctness of the entered user
@@ -350,7 +349,7 @@ def librarian_menu():
 def start_librarian():
     """workflow of library for librarian"""
 
-    library = Librarian('admin')
+    library = Librarian('admin', None)
     if library.validation_password():
         while True:
             next_step = librarian_menu()
@@ -419,6 +418,5 @@ def start():
 
 
 if __name__ == "__main__":
-    
+
     print(start())
-   
