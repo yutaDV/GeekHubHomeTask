@@ -36,16 +36,19 @@ class Transaction:
 
     @property
     def usd_conversion_rate(self):
-        currency_dict = {
-            'USD': 1,
-            'EUR': 1.04,
-            'UAH': 0.028,
-            'GBP': 1.21
-        }
-        for key, value in currency_dict.items():
-            if key == self.currency:
-                return value
-        return 'unknown currency'
+        if self._usd_conversion_rate == 1 and self.currency != 'USD':
+            currency_dict = {
+                'USD': 1,
+                'EUR': 1.04,
+                'UAH': 0.028,
+                'GBP': 1.21
+            }
+            for key, value in currency_dict.items():
+                if key == self.currency:
+                    return value
+            else:
+                return 'unknown currency'
+        return self._usd_conversion_rate
 
     @property
     def description(self):
@@ -63,7 +66,7 @@ class Transaction:
 
 trans_1 = Transaction(1500, '24.11.1995', 'UAH', 0.028, 'exchange')
 trans_2 = Transaction(800, '24.11.2016', 'EUR')
-trans_3 = Transaction(50, '24.11.1995', 'EUR', 1.02)
+trans_3 = Transaction(800, '24.11.1995', 'EUR', 1.4)
 
 
 print(trans_1._usd_conversion_rate)
