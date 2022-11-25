@@ -54,12 +54,14 @@ class Matrix:
 
     def print_out(self):
 
+        result = f''
         for r in range(self.rows):
             for c in range(self.columns):
                 if self.matrix[r][c] is None:
                     self.matrix[r][c] = 0
-                print(self.matrix[r][c], end="  ")
-            print('\n ')
+                result += f' {self.matrix[r][c]}  '
+            result += f'\n'
+        return result
 
     def transpose(self):
 
@@ -76,7 +78,7 @@ class Matrix:
         return self.matrix
 
 
-matrix = Matrix(4, 7)
+matrix = Matrix(2, 3)
 print(matrix.print_out())
 print(matrix.fill())
 print(matrix.print_out())

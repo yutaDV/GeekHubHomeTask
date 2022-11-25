@@ -7,8 +7,9 @@ list, за виключенням того, що індекси в ньому м
 class BrokenList(list):
 
     def __getitem__(self, index):
+
         if index == 0:
-            raise 'IndexErro'
+            raise IndexError('list index out of range')
         if index < 0:
             index = index
         else:
@@ -16,7 +17,7 @@ class BrokenList(list):
         return list.__getitem__(self, index)
 
 
-mylist = [7, 2, 3, 5, 6]
+mylist = [7, 2, 3, 15, 6]
 my_list = BrokenList([7, 2, 3, 5, 6])
 my_list_1 = BrokenList('kdsjhgdfhgkhkdghkgdhgd')
 print(my_list[1])

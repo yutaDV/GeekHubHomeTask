@@ -99,7 +99,6 @@ class Librarian(Persons):
 
     def __init__(self, name, age):
         super().__init__(name, age)
-        user_id = super().user_id()
 
     def validation_password(self):
         """The function will check the librarian's password"""
